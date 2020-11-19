@@ -2,7 +2,7 @@
 
 #include "LevelStreamerActor.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "GameFramework/Character.h"
 // Sets default values
 ALevelStreamerActor::ALevelStreamerActor()
 {
@@ -32,8 +32,9 @@ void ALevelStreamerActor::Tick(float DeltaTime)
 
 void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AActor* MyCharacter = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetOwner();
-	if (OtherActor == MyCharacter && LevelToLoad != "")
+	ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	ACharacter* other = Cast<ACharacter>(OtherActor);
+	if (other != nullptr && LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
@@ -42,8 +43,9 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 
 void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AActor* MyCharacter = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetOwner();
-	if (OtherActor == MyCharacter && LevelToLoad != "")
+	ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	ACharacter* other = Cast<ACharacter>(OtherActor);
+	if (other != nullptr && LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, BlockMovementOnLoad);
